@@ -1,0 +1,19 @@
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-family: "Courier New", monospace;
+}
+
+th, td {
+  padding: 8px;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+}
+
+tr:hover {background-color:#E6F3FF;}
+
+.paginator {
+	text-align: center;
+	margin-top: 1em;
+	margin-bottom: 1em;
+}

@@ -1,0 +1,29 @@
+{
+	"_startPixel": 0,
+	"_stopPixel": 0,
+	"_integrationTime": 100,
+	"_integrationDelay": 0,
+	"_nrAverages": 10,
+	"_corDynDark": {
+		"_enable": 0,
+		"_forgetPercentage": 0
+	},
+	"_smoothing": {
+		"_smoothPix": 0,
+		"_smoothModel": 0
+	},
+	"_saturationDetection": 0,
+	"_trigger": {
+		"_mode": 0,
+		"_source": 0,
+		"_sourceType": 0
+	},
+	"_control": {
+		"_strobeControl": 0,
+		"_laserDelay": 0,
+		"_laserWidth": 0,
+		"_laserWaveLength": 0,
+		"_storeToRam": 0
+	}
+}
+

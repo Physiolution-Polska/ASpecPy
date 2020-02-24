@@ -1,0 +1,21 @@
+<!--DOCTYPE html -->
+<head>
+<link rel="stylesheet"  href="../static/css/plot.css">
+<link rel="stylesheet"  href="../static/css/dissolved.css">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</head>
+<html>
+	<body>
+		<div align='center'>
+			<a href={{ index }}>Back to index</a>
+		</div>
+	<div class="container">
+            <div class="col-md-12">{{plot|safe}}</div>
+	</div>
+	</div>
+		<div id="table-content" >loading...</div>
+	</body>
+
+<script src='../static/js/table.js' id='data-table' data-page='/table'></script>
+</html>

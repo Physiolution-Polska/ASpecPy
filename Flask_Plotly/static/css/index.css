@@ -1,0 +1,28 @@
+html {
+    font-family: sans-serif;
+    display: table;
+    margin: auto;
+}
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  color: #333;
+  background-color: #fff;
+  text-align: center;
+  display: table-cell;
+  vertical-align: middle;
+
+}
+a:link, a:visited {
+  background-color: white;
+  color: black;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+}
+
+a:hover, a:active {
+  background-color: #1A90FF;
+  color: white;
+}

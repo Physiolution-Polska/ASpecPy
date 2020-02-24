@@ -1,0 +1,21 @@
+<table>
+		<tr>
+			<th>Time [m]</th>
+			<th>Absorbance signal [AU]</th>
+			<th>Absorbance background [AU]</th>
+			<th>Concentration [mg/mL]</th>
+			<th>Drug dissloved [mg]</th>
+		</tr>
+		{% for index in range(start, stop) %}
+		<tr>
+			<th>{{ data._time[index] }}</th>
+			<th>{{ data._absorbance[index] }}</th>
+			<th>{{ data._correction[index] }}</th>
+			<th>{{ data._concentration[index] }}</th>
+			<th>{{ data._dissolved[index] }}</th>
+		</tr>
+		{% endfor %}
+</table>
+<div class='paginator'>
+		{{ pagination.links }}
+</div>

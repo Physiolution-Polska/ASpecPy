@@ -1,0 +1,66 @@
+html {
+    font-family: sans-serif;
+    display: table;
+    margin: auto;
+}
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  background-color: #fff;
+  text-align: center;
+  display: table-cell;
+  vertical-align: middle;
+
+}
+container {
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+}
+@media (min-width: 992px) {
+  .container {
+    width: 1270px;
+    height: 600px;
+  }
+}
+@media (min-width: 1400px) {
+  .container {
+    width: 1670px;
+    height: 800px;
+  }
+}
+a:link, a:visited {
+  background-color: white;
+  color: black;
+  padding: 6px 14px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+}
+
+a:hover, a:active {
+  background-color: #1A90FF;
+  color: white;
+}
+.button1 {
+	background-color: white;
+	border-radius: 6px;
+	font-size: 14px;
+	color: black;
+	border: 2px solid #E6F3FF;
+	padding: 12px 20px;
+	transition-duration: 0.3s;
+	width: 100%;
+}
+.button1:hover{
+	background-color: #1A90FF;
+	color: white;
+}
+td, th {
+    min-width: 100px;
+    height: 30px;
+}
+input[type=number]{
+	font-size: 14px;
+}
