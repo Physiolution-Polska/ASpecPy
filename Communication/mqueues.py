@@ -24,10 +24,10 @@ class MQueues():
             qname = '/'+qname
         else:
             qname = '/'+str(os.getpid())
+
         """
-        Initialization of a queue 
+        Initialization of a queue
         for receiving messages
-        
         """
         try:
             self.queues[0][0] = qname
@@ -57,19 +57,18 @@ class MQueues():
 
     def setSendQueue(self, qname=None):
         """
-        Name of a queue, where all messages 
+        Name of a queue, where all messages
         will be sent should be specified in first use
 
         After that, the queue will be set to appropriate one
         which comes in 'response' key in message dict
-        
         Might be changed with appopriate function call
         """
         if qname is not None:
             qname = '/'+qname
             self.queues[1][0] = qname
         try:
-            if ((qname is None) and 
+            if ((qname is None) and
                     (self.queues[1][0]) is not None):
                 qname = self.queues[1][0]
             """
@@ -94,7 +93,7 @@ class MQueues():
 
     def send(self, msg, timeout=5):
         """
-        Sending message synchroniously 
+        Sending message synchroniously
         to a queue for sending mqueue
         """
         if isinstance(self.queues[1][1], posix.MessageQueue):
@@ -109,7 +108,6 @@ class MQueues():
         try:
             # loading message from queue
             self.message = pickle.loads(self.queues[0][1].receive(timeout=timeout)[0])
-            print(self.message)
             """
             Setting name of a queue in order
             to send a response

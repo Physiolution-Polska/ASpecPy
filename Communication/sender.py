@@ -17,7 +17,6 @@ class Sender(MQueues):
         except AttributeError:
             exit(-1)
 
-        
     def switch_case(self, func_name):
         """
         If message should be proceed in a specified way
@@ -29,7 +28,7 @@ class Sender(MQueues):
             return response
         """
         device = self.message['dev']
-        if not getattr(self, device+'_'+func_name, lambda: False)():
+        if getattr(self, device+'_'+func_name, lambda: True)():
             if self.send(self.message):
                 self.receive()
 
@@ -41,9 +40,10 @@ class Sender(MQueues):
         """
         #receiving dict with keys (maybe all keys)
         if self.send(self.message):
+            log.info('Message sended')
             if self.receive():
-                return self.answer
-        return None
+                log.info('Message received')
+                log.info('%s', self.message)
 
     def avantes_measure(self):
         try:
@@ -53,15 +53,14 @@ class Sender(MQueues):
 
             # posix timeout should be grater then 1
             if _timeout < 1:
-                _timeout = 2 
+                _timeout = 2
             else:
                 _timeout *= 2
             return self.receive(_timeout)
 
         except posix.BusyError:
-            return False
-
-        return False
+            log.info('Timeout occur in measurements')
+            pass
 
     def avantes(self, args):
         """
@@ -96,29 +95,18 @@ class Sender(MQueues):
         except AttributeError:
             pass
 
+
 args = SenderParser().getArgs()
-sender = Sender(args)
-
-if __debug__:
-    log.info('Sender openning queues')
-    if sender.setRecvQueue():
-        if sender.setSendQueue('recv'):
-            print(sender.queues)
-    if ((sender.queues[0][1] is not None) and
-            (sender.queues[1][1] is not None)):
-        sender.switch_case(sender.message['type'])
-    else:
-        log.error('Error occur when trying to open queues')
-        sender.closeRecvQueue()
-        exit(-2)
+mq_sender = Sender(args)
+mq_sender.setRecvQueue()
+log.info('Sender openning queues')
+if mq_sender.setSendQueue(args.id):
+    log.info('Sender initialized receiver queue')
+    mq_sender.switch_case(mq_sender.message['type'])
 else:
-    if sender.setRecvQueue():
-        if sender.setSendQueue():
-            if ((sender.queues[0][1] is not None) and
-                    (sender.queues[1][1] is not None)):
-                sender.switch_case()
-            else:
-                sender.closeRecvQueue()
-                exit(-2)
+    mq_sender.closeRecvQueue()
+    log.info('Sender closed queue')
+    exit(-1)
 
-sender.closeRecvQueue()
+mq_sender.closeRecvQueue()
+log.info('Sender closed queue')

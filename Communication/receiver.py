@@ -17,7 +17,7 @@ class Receiver(MQueues):
 
     def switch_case(self, func_name):
         try:
-            device = self.device.dev_type
+            device = self.device.devType
             return getattr(self, device+'_'+func_name)()
         except AttributeError:
             return False
@@ -63,17 +63,21 @@ class Receiver(MQueues):
 
     @_if_debug(log)
     def avantes_close(self):
+        answer = {'answer': 'Closing communication'}
+        self.send(answer)
         return False
 
     @_if_debug(log)
     def readQueue(self):
         while True:
-            if self.receive(timeout=0):
-                switch = self.switch_case(self.message['type'])
-                if switch == False:
-                    if __debug__:
-                        log.warning('Exiting')
-                    break
+            if self.receive(timeout=None):
+                if 'type' in self.message.keys():
+                    switch = self.switch_case(self.message['type'])
+                    if switch == False:
+                        if __debug__:
+                            log.warning('Exiting')
+                        break
+
         # release communication with the device
         if __debug__:
             log.warning('Removing the device')
@@ -82,9 +86,9 @@ class Receiver(MQueues):
 
 args = ReceiverParser().getArgs()
 mq_receiver = Receiver(args)
-if mq_receiver.setRecvQueue():
-    mq_receiver.readQueue()
+if mq_receiver.setRecvQueue(args.id):
     log.info('New queue created %s', args.id)
+    mq_receiver.readQueue()
 else:
     log.warning('Using old queue %s', args.id)
     mq_receiver.readQueue()
