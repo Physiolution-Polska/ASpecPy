@@ -18,7 +18,7 @@ class Data():
         self.clean = None
         self.analyte = None
         self.wavelength = None
-        self._absorbrance = None
+        self.absorbance = None
         self.c_double_array = None
 
     def write(self):
@@ -45,24 +45,24 @@ class Data():
         else:
             data_frame = pandas.DataFrame({'lambda': self.wavelength})
 
-        data = getattr(self, '_' + self.type)
-
+        data = getattr(self, self.type)
         data_frame[int(time.time())] = pandas.DataFrame({'value': data})
         data_frame.to_csv(DATA[self.type], index=False)
-
         return True
 
-    def absorbance(self):
+    def calcAbsorbance(self):
         if (self.black is None or self.clean is None
                 or self.analyte is None):
             return False
         with np.errstate(divide='ignore', invalid='ignore'):
-            self.absorbanace = np.log10(np.divide(np.subtract(self.clean,
+            self.absorbance = np.log10(np.divide(np.subtract(self.clean,
                                                               self.black),
                                                   np.subtract(self.analyte,
                                                               self.black)))
-            self.absorbanace[self.absorbanace == np.inf] = 0
-            self.absorbanace = np.nan_to_num(self.absorbanace)
+            self.absorbance = np.around(self.absorbance, decimals=4)
+            self.absorbance[self.absorbance == np.inf] = 0
+            self.absorbance = np.nan_to_num(self.absorbance)
+
         self.type = 'absorbance'
         self.write()
         self.type = 'analyte'

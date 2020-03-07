@@ -129,10 +129,12 @@ class MeasConfigType(Structure):
             self._stopPixel = GLOBAL_VARS['MAXIMUM_PIXELS_RANGE']
 
     def setAmount(self, amount):
-        if (amount == 0 or amount < -1):
+        # {(0,65535], -1}
+        if ((amount > 0) and (amount <= 0xffff) or
+              (amount == -1)):
+            self.amount = amount
+        else:
             return False
-
-        self.amount = amount
         return True
 
     def loadCfg(self, cfg):

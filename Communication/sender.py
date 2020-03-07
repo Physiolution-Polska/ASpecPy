@@ -32,6 +32,8 @@ class Sender(MQueues):
             if self.send(self.message):
                 self.receive()
 
+        log.info('%s', self.message)
+
     def avantes_info(self):
         """
         Sending message to receiver
@@ -56,8 +58,7 @@ class Sender(MQueues):
                 _timeout = 2
             else:
                 _timeout *= 2
-            return self.receive(_timeout)
-
+            self.receive(_timeout)
         except posix.BusyError:
             log.info('Timeout occur in measurements')
             pass
@@ -86,12 +87,7 @@ class Sender(MQueues):
             self.message['mtype'] = 'black'
 
         try:
-            # {(0,65535], -1}
-            if ((args.amount > 0) and (args.amount <= 0xffff) or
-                  (args.amount == -1)):
-                self.message['amount'] = args.amount
-            else:
-                self.message['amount'] = 1
+            self.message['amount'] = args.amount
         except AttributeError:
             pass
 

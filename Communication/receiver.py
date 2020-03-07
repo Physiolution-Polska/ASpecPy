@@ -24,7 +24,7 @@ class Receiver(MQueues):
 
     @_if_debug(log)
     def avantes_empty(self):
-        return True
+        return None
 
     @_if_debug(log)
     def avantes_info(self):
@@ -33,39 +33,49 @@ class Receiver(MQueues):
 
     @_if_debug(log)
     def avantes_amount(self):
-        answer = self.device.cfg.setAmount(self.message['amount'])
-        self.send(answer)
+        devAnswer = self.device.cfg.setAmount(self.message['amount'])
+        reply = self.buildReply(devAnswer)
+        self.send(reply)
 
     @_if_debug(log)
     def avantes_update(self):
-        answer = self.device.update(self.message['mkeys'])
-        self.send(self.answer)
+        devAnswer = self.device.update(self.message['mkeys'])
+        reply = self.buildReply(devAnswer)
+        self.send(reply)
 
     @_if_debug(log)
     def avantes_measure(self):
         # sending timeout for a 'sender'
-        answer = self.device.measurement_timeout()
-        self.send(answer)
+        devAnswer = self.device.measurement_timeout()
+        reply = self.buildReply(devAnswer)
+        self.send(reply)
 
         # starting measurements
-        answer = self.device.measure(self.message['mtype'])
-        self.send(answer)
+        devAnswer = self.device.measure(self.message['mtype'])
+        reply = self.buildReply(devAnswer)
+        self.send(reply)
 
     @_if_debug(log)
     def avantes_load(self):
-        answer = self.device.cfg.load_cfg(self.message['cfg'])
-        self.send(self.answer)
+        devAnswer = self.device.cfg.loadCfg(self.message['cfg'])
+        reply = self.buildReply(devAnswer)
+        self.send(reply)
 
     @_if_debug(log)
     def avantes_stop(self):
-        answer = self.device.stop()
-        self.send(answer)
+        devAnswer = self.device.stop()
+        reply = self.buildReply(devAnswer)
+        self.send(reply)
 
     @_if_debug(log)
     def avantes_close(self):
-        answer = {'answer': 'Closing communication'}
-        self.send(answer)
+        reply = self.buildReply('Closing communication')
+        self.send(reply)
         return False
+
+    def buildReply(self, message):
+        reply = {'reply':str(message)}
+        return reply
 
     @_if_debug(log)
     def readQueue(self):

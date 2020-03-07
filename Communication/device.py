@@ -50,7 +50,7 @@ class Device():
 
             """
             Activation of the first 'not used' device
-            in the device list. 
+            in the device list.
             Probably should be changed to device ID
             (serial number which is a message queue name)
             """
@@ -126,7 +126,8 @@ class Device():
     def update_avantes(self, values):
         updateDict = dict(zip(UPDATABLE_CFG, values))
         if self.cfg.loadCfg(updateDict):
-            return ava.prepareMeasure(self.handler, self.cfg)
+            if ava.prepareMeasure(self.handler, self.cfg) == 0:
+                return True
         return False
 
     def measure(self, values):
@@ -139,6 +140,10 @@ class Device():
             return False
 
     def measure_avantes(self):
+        global MEASUREMENT_TIMEOUT
+        global is_measurement_available
+        global measuring_thread
+
         exitStatus = ava.prepareMeasure(self.handler, self.cfg)
         if __debug__:
             log.warning('Prepare measurenet function return %s',
@@ -150,7 +155,6 @@ class Device():
                 ava.setDigitalOut(self.handler, c_ubyte(3), c_ubyte(0))
 
             if self.cfg.amount == -1:
-                global measuring_thread
                 # infinite measurement
                 exitStatus = ava.measure(self.handler,
                                          call_back,
@@ -171,19 +175,15 @@ class Device():
                     Main thread stop as a workaround for
                     Incorrect behavior
                     """
-                    global MEASUREMENT_TIMEOUT
-                    global is_measurement_available
-
                     if not is_measurement_available.wait(timeout=MEASUREMENT_TIMEOUT):
                         if __debug__:
                             log.error('Measurement timeout occur %s',
                                       ERROR_CODES_MESSAGES[exitStatus])
                         return False
                     else:
-
                         is_measurement_available.clear()
                         # arbitrary defined timeout time
-                        return avantesGetScopeData()
+                        return self.avantesGetScopeData()
         return False
 
     def avantesGetScopeData(self):
@@ -204,6 +204,7 @@ class Device():
                 exitStatus = ava.getScopeData(self.handler,
                                               c_uint(1),
                                               self.data.c_double_array)
+
                 if exitStatus != 0:
                     if __debug__:
                         log.error('Cannot get scoped data %s',
@@ -220,10 +221,9 @@ class Device():
                     log.warning('Data receiving timeout')
                 return False
 
-            avantesSetMeasAttribute()
-             
+            self.avantesSetMeasAttribute()
             if self.data.type == 'analyte':
-                self.data.absorbance()
+                exitStatus = self.data.calcAbsorbance()
 
         return True
 
@@ -231,7 +231,7 @@ class Device():
         data = np.ctypeslib.as_array(self.data.c_double_array)
         data = np.resize(data, GLOBAL_VARS['MAXIMUM_PIXELS_RANGE'])
         try:
-            setattr(self.data, self.data.type, data) 
+            setattr(self.data, self.data.type, data)
         except AttributeError:
             if __debug__:
                 log.error('Uspecified attribute for data storing')
@@ -250,7 +250,7 @@ class Device():
         """
         MEASUREMENT_TIMEOUT = (self.cfg._integrationTime
                                * self.cfg._nrAverages
-                               * self.cfg.amount) // 1000
+                               * self.cfg.amount) / 1000
 
         if MEASUREMENT_TIMEOUT < 1:
             MEASUREMENT_TIMEOUT = 2
@@ -258,7 +258,7 @@ class Device():
             MEASUREMENT_TIMEOUT *= 2
 
         return MEASUREMENT_TIMEOUT
-    
+
     def infinite_measure(self):
         global stop_measuring
         while not stop_measuring.is_set():
@@ -269,7 +269,7 @@ class Device():
             if exitStatus == 0:
                 avantesSetMeasAttribute()
                 if self.data.type == 'analyte':
-                    self.data.absorbance()
+                    self.data.calcAbsorbance()
 
             if __debug__:
                 log.error('While loop return %s',
